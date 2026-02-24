@@ -1,0 +1,99 @@
+# Build results
+bin/
+obj/
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio cache/options
+.vs/
+.vscode/
+
+# Rider IDE
+.idea/
+*.sln.iml
+riderModule.iml
+/_ReSharper.Caches/
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Rider specific
+.idea/
+*.sln.iml
+riderModule.iml
+
+# NuGet
+/packages/
+*.nupkg
+*.snupkg
+.nuget/
+nuget.config
+project.lock.json
+project.assets.json
+launchSettings.json
+
+# Test Results
+TestResults/
+*.trx
+*.coverage
+
+# Entity Framework
+*.db
+*.db-shm
+*.db-wal
+migrations/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# OS specific
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Application specific
+appsettings.*.json
+!appsettings.json
+!appsettings.Development.json
+wwwroot/
+dist/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
+coverage/
+.nyc_output/
