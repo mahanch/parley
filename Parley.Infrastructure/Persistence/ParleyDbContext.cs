@@ -3,42 +3,44 @@ using Parley.Domain.Aggregates.ConversationAgg.Entities;
 using Parley.Domain.Aggregates.MessageAgg.Entities;
 using Parley.Domain.Aggregates.MessageAgg.ValueObjects;
 using Parley.Domain.Aggregates.ServerAgg.Entities;
+using System.Reflection;
 
 namespace Parley.Infrastructure.Persistence;
 
 /// <summary>
 /// Main DbContext for the Parley Discord-clone application.
 /// Handles all data persistence for conversations, messages, and servers.
+/// Uses EF Core with PostgreSQL and JSONB features for flexible data storage.
 /// </summary>
 public class ParleyDbContext : DbContext
 {
     /// <summary>
-    /// DbSet for Conversations.
+    /// DbSet for Conversations (Aggregate Root).
     /// </summary>
     public DbSet<Conversation> Conversations { get; set; }
 
     /// <summary>
-    /// DbSet for ConversationParticipants.
+    /// DbSet for ConversationParticipants (Entity).
     /// </summary>
     public DbSet<ConversationParticipant> ConversationParticipants { get; set; }
 
     /// <summary>
-    /// DbSet for Messages.
+    /// DbSet for Messages (Aggregate Root with Snowflake ID).
     /// </summary>
     public DbSet<Message> Messages { get; set; }
 
     /// <summary>
-    /// DbSet for Servers.
+    /// DbSet for Servers (Aggregate Root).
     /// </summary>
     public DbSet<Server> Servers { get; set; }
 
     /// <summary>
-    /// DbSet for ServerRoles.
+    /// DbSet for ServerRoles (Entity).
     /// </summary>
     public DbSet<ServerRole> ServerRoles { get; set; }
 
     /// <summary>
-    /// DbSet for ServerMembers.
+    /// DbSet for ServerMembers (Entity).
     /// </summary>
     public DbSet<ServerMember> ServerMembers { get; set; }
 
@@ -51,14 +53,14 @@ public class ParleyDbContext : DbContext
 
     /// <summary>
     /// Configures the database model and entity mappings.
+    /// Uses IEntityTypeConfiguration classes from the Configurations folder.
     /// </summary>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        ConfigureConversationAggregate(modelBuilder);
-        ConfigureMessageAggregate(modelBuilder);
-        ConfigureServerAggregate(modelBuilder);
+        // Apply all configurations from the current assembly
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 
     /// <summary>
