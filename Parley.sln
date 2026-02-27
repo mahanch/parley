@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.2.11430.68 d18.0
+VisualStudioVersion = 18.2.11430.68
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parley.Domain", "Parley.Domain\Parley.Domain.csproj", "{EBB10F94-D522-428D-B638-81C6A1F07DDA}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parley.AppHost", "Parley.AppHost\Parley.AppHost.csproj", "{F4DAFB8A-7C45-4BFA-BA02-B1C2D59D73B9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parley.ServiceDefaults", "Parley.ServiceDefaults\Parley.ServiceDefaults.csproj", "{F188395B-B478-4B0B-9E09-0B1803B38461}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parley.Application.Contracts", "Parley.Application.Contracts\Parley.Application.Contracts.csproj", "{9D80CEAD-A48E-4687-A3EF-5194FBD02343}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,6 +99,18 @@ Global
 		{F188395B-B478-4B0B-9E09-0B1803B38461}.Release|x64.Build.0 = Release|Any CPU
 		{F188395B-B478-4B0B-9E09-0B1803B38461}.Release|x86.ActiveCfg = Release|Any CPU
 		{F188395B-B478-4B0B-9E09-0B1803B38461}.Release|x86.Build.0 = Release|Any CPU
+		{9D80CEAD-A48E-4687-A3EF-5194FBD02343}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D80CEAD-A48E-4687-A3EF-5194FBD02343}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D80CEAD-A48E-4687-A3EF-5194FBD02343}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9D80CEAD-A48E-4687-A3EF-5194FBD02343}.Debug|x64.Build.0 = Debug|Any CPU
+		{9D80CEAD-A48E-4687-A3EF-5194FBD02343}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9D80CEAD-A48E-4687-A3EF-5194FBD02343}.Debug|x86.Build.0 = Debug|Any CPU
+		{9D80CEAD-A48E-4687-A3EF-5194FBD02343}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D80CEAD-A48E-4687-A3EF-5194FBD02343}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D80CEAD-A48E-4687-A3EF-5194FBD02343}.Release|x64.ActiveCfg = Release|Any CPU
+		{9D80CEAD-A48E-4687-A3EF-5194FBD02343}.Release|x64.Build.0 = Release|Any CPU
+		{9D80CEAD-A48E-4687-A3EF-5194FBD02343}.Release|x86.ActiveCfg = Release|Any CPU
+		{9D80CEAD-A48E-4687-A3EF-5194FBD02343}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

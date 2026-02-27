@@ -8,10 +8,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Parley.Domain\Parley.Domain.csproj" />
+    <ProjectReference Include="..\Parley.Application.Contracts\Parley.Application.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.10.0" />
   </ItemGroup>
 
 </Project>
