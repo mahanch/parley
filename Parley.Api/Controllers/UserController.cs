@@ -6,7 +6,9 @@ using Parley.Domain.Aggregates.UserAgg.Entities;
 
 namespace Parley.Api.Controllers;
 
-public class UserController : Controller
+[ApiController]
+[Route("api/[controller]")]
+public class UserController : ControllerBase
 {
     private readonly IMediator _mediator;
 
