@@ -5,8 +5,8 @@ namespace Parley.Domain.Aggregates.ConversationAgg;
 
 /// <summary>
 /// Repository interface for Conversation aggregate operations.
-/// Focused on write operations only (Commands).
-/// Query operations use IContext directly (Queries).
+/// Focused on write operations (Commands) and existence checks for business logic.
+/// Query operations that return DTOs use Query Services.
 /// </summary>
 public interface IConversationRepository : IRepository<Conversation, Guid>
 {
@@ -15,5 +15,11 @@ public interface IConversationRepository : IRepository<Conversation, Guid>
     /// This returns a tracked entity that can be modified.
     /// </summary>
     Task<ConversationParticipant?> GetParticipantAsync(Guid conversationId, Guid userId, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Checks if a user is a participant in a conversation.
+    /// Used for permission validation in command handlers.
+    /// </summary>
+    Task<bool> IsUserParticipantAsync(Guid conversationId, Guid userId, CancellationToken cancellationToken = default);
 }
 

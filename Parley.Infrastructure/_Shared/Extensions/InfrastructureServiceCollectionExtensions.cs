@@ -1,7 +1,6 @@
-﻿﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Parley.Application.Contracts.Interfaces.Caching;
-using Parley.Application.Contracts.Interfaces.Data;
 using Parley.Application.Contracts.Interfaces.Infrastructure;
 using Parley.Domain._Shared;
 using Parley.Domain.Aggregates.ConversationAgg;
@@ -52,9 +51,6 @@ public static class InfrastructureServiceCollectionExtensions
 
         // Register Unit of Work
         services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-        // Register ApplicationContext for queries (read-optimized)
-        services.AddScoped<IContext, ApplicationContext>();
 
         // Register Snowflake ID Generator
         var generatorId = snowflakeGeneratorId ?? 0;

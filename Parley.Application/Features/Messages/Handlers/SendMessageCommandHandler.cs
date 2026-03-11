@@ -1,7 +1,5 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Parley.Application._Shared.DTOs;
-using Parley.Application.Contracts.Interfaces.Data;
 using Parley.Application.Contracts.Interfaces.Infrastructure;
 using Parley.Application.Features.Messages.Commands;
 using Parley.Domain._Shared;
@@ -18,8 +16,7 @@ namespace Parley.Application.Features.Messages.Handlers;
 /// Demonstrates:
 /// - Snowflake ID generation
 /// - Domain entity creation
-/// - Repository usage for writes (commands)
-/// - IContext usage for reads (permission checks)
+/// - Repository usage for writes (commands) and existence checks
 /// - Unit of Work pattern
 /// - Error handling
 /// </summary>
@@ -27,20 +24,17 @@ public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, Bas
 {
     private readonly IMessageRepository _messageRepository;
     private readonly IConversationRepository _conversationRepository;
-    private readonly IContext _context;
     private readonly ISnowflakeIdGenerator _snowflakeIdGenerator;
     private readonly IUnitOfWork _unitOfWork;
 
     public SendMessageCommandHandler(
         IMessageRepository messageRepository,
         IConversationRepository conversationRepository,
-        IContext context,
         ISnowflakeIdGenerator snowflakeIdGenerator,
         IUnitOfWork unitOfWork)
     {
         _messageRepository = messageRepository ?? throw new ArgumentNullException(nameof(messageRepository));
         _conversationRepository = conversationRepository ?? throw new ArgumentNullException(nameof(conversationRepository));
-        _context = context ?? throw new ArgumentNullException(nameof(context));
         _snowflakeIdGenerator = snowflakeIdGenerator ?? throw new ArgumentNullException(nameof(snowflakeIdGenerator));
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
     }
@@ -51,10 +45,8 @@ public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, Bas
     {
         try
         {
-            // Step 1: Verify that the conversation exists using IContext (read-optimized)
-            var conversationExists = await _context.Conversations
-                .AsNoTracking()
-                .AnyAsync(c => c.Id == request.ConversationId, cancellationToken);
+            // Step 1: Verify that the conversation exists using repository
+            var conversationExists = await _conversationRepository.ExistsAsync(request.ConversationId, cancellationToken);
 
             if (!conversationExists)
             {
@@ -65,13 +57,11 @@ public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, Bas
                 );
             }
 
-            // Step 2: Verify sender is a participant using IContext (read-optimized)
-            var isParticipant = await _context.ConversationParticipants
-                .AsNoTracking()
-                .AnyAsync(
-                    cp => cp.ConversationId == request.ConversationId && 
-                          cp.UserId == request.SenderId,
-                    cancellationToken);
+            // Step 2: Verify sender is a participant using repository
+            var isParticipant = await _conversationRepository.IsUserParticipantAsync(
+                request.ConversationId, 
+                request.SenderId, 
+                cancellationToken);
 
             if (!isParticipant)
             {
@@ -105,11 +95,10 @@ public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, Bas
 
             // Step 7: Update participant's watermark (last read message)
             // Fetch participant using repository to get tracked entity for update
-            var participant = await _context.ConversationParticipants
-                .FirstOrDefaultAsync(
-                    cp => cp.ConversationId == request.ConversationId && 
-                          cp.UserId == request.SenderId,
-                    cancellationToken);
+            var participant = await _conversationRepository.GetParticipantAsync(
+                request.ConversationId, 
+                request.SenderId, 
+                cancellationToken);
 
             if (participant != null)
             {

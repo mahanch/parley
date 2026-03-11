@@ -13,10 +13,10 @@ namespace Parley.Infrastructure.Persistence.Repositories;
 public abstract class RepositoryBase<TEntity, TKey> : IRepository<TEntity, TKey> 
     where TEntity : class
 {
-    protected readonly ParleyDbContext Context;
+    private readonly DbContext Context;
     protected readonly DbSet<TEntity> DbSet;
 
-    protected RepositoryBase(ParleyDbContext context)
+    protected RepositoryBase(DbContext context)
     {
         Context = context ?? throw new ArgumentNullException(nameof(context));
         DbSet = Context.Set<TEntity>();

@@ -1,13 +1,16 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Parley.Application._Bootstrapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add service defaults (health checks, logging, service discovery, resilience)
 // builder.AddServiceDefaults();
 
+builder.Services.AddApplication();
+
 // Add services to the container
-builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -18,13 +21,13 @@ var app = builder.Build();
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
 
+app.MapControllers();
 // app.MapGet("/health/ready", async (IHealthCheckService healthCheck) =>
 // {
 //     var result = await healthCheck.CheckHealthAsync();
