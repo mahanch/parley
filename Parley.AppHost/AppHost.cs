@@ -7,7 +7,9 @@ var builder = DistributedApplication.CreateBuilder(args);
 // تنظیم registry خودت
 var postgres = builder.AddPostgres("postgres")
     .WithImageRegistry("docker.arvancloud.ir")
-    .WithPgAdmin(c => c.WithImageRegistry("docker.arvancloud.ir"));
+    .WithHostPort(5432)
+    .WithDataVolume("parley-postgres-data")
+    .WithLifetime(ContainerLifetime.Persistent);
 
 var parleyDb = postgres.AddDatabase("parleydb");
 

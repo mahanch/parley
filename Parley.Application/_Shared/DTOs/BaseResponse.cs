@@ -19,6 +19,9 @@ public class BaseResponse
     /// Optional error details.
     /// </summary>
     public Dictionary<string, string[]>? Errors { get; set; }
+    
+    
+    public ErrorType ErrorType { get; set; } = ErrorType.None;
 
     /// <summary>
     /// Creates a successful response.
@@ -35,19 +38,19 @@ public class BaseResponse
     /// <summary>
     /// Creates a failed response with a single error.
     /// </summary>
-    public static BaseResponse Failure(string message, string? errorKey = null, params string[] errorValues)
+    public static BaseResponse Failure(string message, ErrorType errorType = ErrorType.BadRequest,
+        string? errorKey = null, params string[] errorValues)
     {
         var response = new BaseResponse
         {
             IsSuccess = false,
             Message = message,
+            ErrorType = errorType,
             Errors = new Dictionary<string, string[]>()
         };
 
         if (!string.IsNullOrEmpty(errorKey))
-        {
             response.Errors[errorKey] = errorValues;
-        }
 
         return response;
     }
@@ -55,15 +58,25 @@ public class BaseResponse
     /// <summary>
     /// Creates a failed response with multiple errors.
     /// </summary>
-    public static BaseResponse Failure(string message, Dictionary<string, string[]> errors)
-    {
-        return new BaseResponse
-        {
-            IsSuccess = false,
-            Message = message,
-            Errors = errors
-        };
-    }
+    public static BaseResponse Failure(string message, ErrorType errorType, Dictionary<string, string[]> errors) =>
+        new() { IsSuccess = false, Message = message, ErrorType = errorType, Errors = errors };
+    
+    
+    public static BaseResponse NotFound(string message) =>
+        new() { IsSuccess = false, Message = message, ErrorType = ErrorType.NotFound };
+
+    public static BaseResponse Unauthorized(string message) =>
+        new() { IsSuccess = false, Message = message, ErrorType = ErrorType.Unauthorized };
+
+    public static BaseResponse ValidationError(string message) =>
+        new() { IsSuccess = false, Message = message, ErrorType = ErrorType.Validation };
+
+    public static BaseResponse ValidationError(Dictionary<string, string[]> errors) =>
+        new() { IsSuccess = false, Message = "Validation failed", ErrorType = ErrorType.Validation, Errors = errors };
+
+    public static BaseResponse InternalServerError(string message) =>
+        new() { IsSuccess = false, Message = message, ErrorType = ErrorType.InternalServerError };
+    
 }
 
 /// <summary>
@@ -92,19 +105,19 @@ public class BaseResponse<T> : BaseResponse
     /// <summary>
     /// Creates a failed response with a single error.
     /// </summary>
-    public static new BaseResponse<T> Failure(string message, string? errorKey = null, params string[] errorValues)
+    public new static BaseResponse<T> Failure(string message, ErrorType errorType = ErrorType.BadRequest,
+        string? errorKey = null, params string[] errorValues)
     {
         var response = new BaseResponse<T>
         {
             IsSuccess = false,
             Message = message,
+            ErrorType = errorType,
             Errors = new Dictionary<string, string[]>()
         };
 
         if (!string.IsNullOrEmpty(errorKey))
-        {
             response.Errors[errorKey] = errorValues;
-        }
 
         return response;
     }
@@ -112,14 +125,6 @@ public class BaseResponse<T> : BaseResponse
     /// <summary>
     /// Creates a failed response with multiple errors.
     /// </summary>
-    public static new BaseResponse<T> Failure(string message, Dictionary<string, string[]> errors)
-    {
-        return new BaseResponse<T>
-        {
-            IsSuccess = false,
-            Message = message,
-            Errors = errors
-        };
-    }
+    public static new BaseResponse<T> Failure(string message, ErrorType errorType, Dictionary<string, string[]> errors) =>
+        new() { IsSuccess = false, Message = message, ErrorType = errorType, Errors = errors };
 }
-

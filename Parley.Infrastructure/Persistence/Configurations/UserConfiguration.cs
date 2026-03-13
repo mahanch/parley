@@ -12,7 +12,8 @@ public class UserConfiguration:IEntityTypeConfiguration<User>
         builder.ToTable("Users");
         builder.HasKey(x => x.Id);
         
-        builder.Property(x => x.Id).ValueGeneratedOnAdd();
+        builder.Property(x => x.Id)
+            .HasColumnName("id").ValueGeneratedOnAdd();
         
         builder.Property(x=>x.FirstName)
             .HasColumnName("first_name").IsRequired().HasMaxLength(50);
@@ -24,7 +25,7 @@ public class UserConfiguration:IEntityTypeConfiguration<User>
             .HasColumnName("email").IsRequired().HasMaxLength(50);
         
         builder.Property(x => x.Password)
-            .HasColumnName("password").IsRequired().HasMaxLength(50);
+            .HasColumnName("password").IsRequired().HasMaxLength(256);
         
         builder.Property(x=>x.Username)
             .HasColumnName("username").IsRequired().HasMaxLength(50);

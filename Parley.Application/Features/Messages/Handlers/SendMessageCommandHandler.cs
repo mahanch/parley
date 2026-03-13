@@ -52,6 +52,7 @@ public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, Bas
             {
                 return BaseResponse<SendMessageResponse>.Failure(
                     "Failed to send message.",
+                    ErrorType.BadRequest,
                     "conversation_not_found",
                     $"Conversation with ID '{request.ConversationId}' does not exist."
                 );
@@ -67,6 +68,7 @@ public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, Bas
             {
                 return BaseResponse<SendMessageResponse>.Failure(
                     "Failed to send message.",
+                    ErrorType.BadRequest,
                     "not_a_participant",
                     "You are not a participant in this conversation."
                 );
@@ -135,6 +137,7 @@ public class SendMessageCommandHandler : IRequestHandler<SendMessageCommand, Bas
             // In production, log this exception
             return BaseResponse<SendMessageResponse>.Failure(
                 "An unexpected error occurred while sending the message.",
+                ErrorType.BadRequest,
                 "internal_error",
                 ex.Message
             );

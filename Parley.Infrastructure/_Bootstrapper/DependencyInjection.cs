@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Parley.Application._Shared.Behaviors;
 using Parley.Application.Contracts.Interfaces.Caching;
 using Parley.Application.Contracts.Interfaces.Infrastructure;
+using Parley.Application.Contracts.Interfaces.Security;
 using Parley.Application.Contracts.Query.Conversation;
 using Parley.Domain._Shared;
 using Parley.Domain.Aggregates.ConversationAgg;
@@ -14,6 +15,7 @@ using Parley.Infrastructure._Shared.Services;
 using Parley.Infrastructure.Persistence;
 using Parley.Infrastructure.Persistence.QueryServices;
 using Parley.Infrastructure.Persistence.Repositories;
+using Parley.Infrastructure.Security;
 using StackExchange.Redis;
 
 namespace Parley.Infrastructure._Bootstrapper;
@@ -26,7 +28,7 @@ public static class DependencyInjection
     {
         // DbContext
         services.AddDbContext<ParleyDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("postgres"),
+            options.UseNpgsql(configuration.GetConnectionString("parleydb"),
                 b => b.MigrationsAssembly(typeof(ParleyDbContext).Assembly.FullName)));
 
         // Redis
@@ -61,6 +63,9 @@ public static class DependencyInjection
         
         // MediatR Validation Behavior
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+        
+        // PasswordHasehr
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
 
         return services;
     }

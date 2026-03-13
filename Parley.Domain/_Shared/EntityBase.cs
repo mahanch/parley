@@ -5,6 +5,7 @@
 /// </summary>
 public abstract class EntityBase<T>
 {
+    
     public T Id { get; protected  init; }
     /// <summary>
     /// Timestamp when this entity was created.

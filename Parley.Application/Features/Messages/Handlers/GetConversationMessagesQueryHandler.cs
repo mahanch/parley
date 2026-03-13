@@ -59,6 +59,7 @@ public class GetConversationMessagesQueryHandler : IRequestHandler<GetConversati
             // In production, log this exception
             return BaseResponse<GetConversationMessagesResponse>.Failure(
                 "An unexpected error occurred while retrieving messages.",
+                ErrorType.BadRequest,
                 "internal_error",
                 ex.Message
             );

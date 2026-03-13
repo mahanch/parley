@@ -1,6 +1,10 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Parley.Api.Filters;
+using Parley.Api.Middlewares;
 using Parley.Application._Bootstrapper;
 using Parley.Infrastructure._Bootstrapper;
+using Parley.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +16,12 @@ builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 // Add services to the container
 builder.Services.AddSwaggerGen();
-builder.Services.AddControllers();
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
+builder.Services.AddControllers(options =>
+    options.Filters.Add<BaseResponseFilter>());
 
 var app = builder.Build();
 
@@ -29,11 +38,19 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+
+app.UseExceptionHandler();
+
 // این هم health endpoint های Aspire رو map میکنه (/health و /alive)
 app.MapDefaultEndpoints();
 
 app.MapControllers();
 
-
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<ParleyDbContext>();
+    await db.Database.MigrateAsync();
+}
 app.Run();
 
