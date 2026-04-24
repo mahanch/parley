@@ -21,5 +21,10 @@ public interface IConversationRepository : IRepository<Conversation, Guid>
     /// Used for permission validation in command handlers.
     /// </summary>
     Task<bool> IsUserParticipantAsync(Guid conversationId, Guid userId, CancellationToken cancellationToken = default);
-}
 
+    /// <summary>
+    /// Finds an existing direct conversation between two users.
+    /// Returns null if no direct conversation exists.
+    /// </summary>
+    Task<Guid?> FindDirectConversationAsync(Guid userId1, Guid userId2, CancellationToken cancellationToken = default);
+}

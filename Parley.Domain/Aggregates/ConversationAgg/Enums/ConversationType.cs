@@ -13,11 +13,5 @@ public enum ConversationType
     /// <summary>
     /// Group conversation with multiple users.
     /// </summary>
-    Group = 1,
-
-    /// <summary>
-    /// Channel within a server.
-    /// </summary>
-    ServerChannel = 2
+    Group = 1
 }
-

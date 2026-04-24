@@ -3,6 +3,7 @@
 public interface IConversationQueryService:IQueryService<Guid,Domain.Aggregates.ConversationAgg.Entities.Conversation>
 {
     Task<GetConversationMessagesResult?> GetMessagesAsync(GetConversationMessagesFilter  filter, CancellationToken ct);
+    Task<IReadOnlyList<UserConversationDto>> GetUserConversationsAsync(Guid userId, CancellationToken ct);
 }
 
 public class GetConversationMessagesFilter
@@ -34,4 +35,15 @@ public class ConversationMessageDto
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public bool IsDeleted { get; set; }
+}
+
+public class UserConversationDto
+{
+    public Guid ConversationId { get; set; }
+    public string Title { get; set; } = null!;
+    public string? LastMessagePreview { get; set; }
+    public DateTime? LastMessageTime { get; set; }
+    public bool IsPinned { get; set; }
+    public bool IsMuted { get; set; }
+    public int UnreadMessagesCount { get; set; }
 }

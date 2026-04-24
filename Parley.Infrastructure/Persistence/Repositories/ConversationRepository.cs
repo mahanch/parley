@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Parley.Domain.Aggregates.ConversationAgg;
 using Parley.Domain.Aggregates.ConversationAgg.Entities;
+using Parley.Domain.Aggregates.ConversationAgg.Enums;
 
 namespace Parley.Infrastructure.Persistence.Repositories;
 
@@ -38,5 +39,31 @@ public sealed class ConversationRepository : RepositoryBase<Conversation, Guid>,
                 cp => cp.ConversationId == conversationId && cp.UserId == userId,
                 cancellationToken);
     }
-}
 
+    public async Task<Guid?> FindDirectConversationAsync(
+        Guid userId1, 
+        Guid userId2, 
+        CancellationToken cancellationToken = default)
+    {
+        // Find conversations where both users are participants and type is Direct
+        var conversationIds = await _context.ConversationParticipants
+            .Where(cp => cp.UserId == userId1 || cp.UserId == userId2)
+            .GroupBy(cp => cp.ConversationId)
+            .Where(g => g.Count() == 2) // Exactly two participants
+            .Select(g => g.Key)
+            .ToListAsync(cancellationToken);
+
+        // Check which of these are Direct conversations
+        foreach (var conversationId in conversationIds)
+        {
+            var conversation = await _context.Conversations
+                .FirstOrDefaultAsync(c => c.Id == conversationId && c.Type == ConversationType.Direct, cancellationToken);
+            if (conversation != null)
+            {
+                return conversation.Id;
+            }
+        }
+
+        return null;
+    }
+}

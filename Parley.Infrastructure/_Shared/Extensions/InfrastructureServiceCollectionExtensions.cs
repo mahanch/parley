@@ -5,7 +5,6 @@ using Parley.Application.Contracts.Interfaces.Infrastructure;
 using Parley.Domain._Shared;
 using Parley.Domain.Aggregates.ConversationAgg;
 using Parley.Domain.Aggregates.MessageAgg;
-using Parley.Domain.Aggregates.ServerAgg;
 using Parley.Infrastructure.Persistence;
 using Parley.Infrastructure.Persistence.Repositories;
 using Parley.Infrastructure._Shared.Services;
@@ -47,7 +46,6 @@ public static class InfrastructureServiceCollectionExtensions
         // Register repositoriesچمچمی
         services.AddScoped<IConversationRepository, ConversationRepository>();
         services.AddScoped<IMessageRepository, MessageRepository>();
-        services.AddScoped<IServerRepository, ServerRepository>();
 
         // Register Unit of Work
         services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -78,5 +76,3 @@ public static class InfrastructureServiceCollectionExtensions
         await dbContext.Database.MigrateAsync();
     }
 }
-
-

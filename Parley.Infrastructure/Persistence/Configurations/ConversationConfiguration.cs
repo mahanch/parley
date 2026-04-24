@@ -23,10 +23,6 @@ public class ConversationConfiguration : IEntityTypeConfiguration<Conversation>
             .HasColumnName("id")
             .IsRequired();
 
-        builder.Property(c => c.ServerId)
-            .HasColumnName("server_id")
-            .IsRequired(false);
-
         builder.Property(c => c.Type)
             .HasColumnName("type")
             .HasConversion<int>()
@@ -56,9 +52,6 @@ public class ConversationConfiguration : IEntityTypeConfiguration<Conversation>
         builder.HasIndex(c => c.Type)
             .HasDatabaseName("ix_conversations_type");
 
-        builder.HasIndex(c => c.ServerId)
-            .HasDatabaseName("ix_conversations_server_id");
-
         builder.HasIndex(c => c.CreatedAt)
             .HasDatabaseName("ix_conversations_created_at");
 
@@ -67,4 +60,3 @@ public class ConversationConfiguration : IEntityTypeConfiguration<Conversation>
             .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }
-

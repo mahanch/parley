@@ -2,14 +2,14 @@
 using Parley.Domain.Aggregates.ConversationAgg.Entities;
 using Parley.Domain.Aggregates.MessageAgg.Entities;
 using Parley.Domain.Aggregates.MessageAgg.ValueObjects;
-using Parley.Domain.Aggregates.ServerAgg.Entities;
 using System.Reflection;
+using Parley.Domain.Aggregates.UserAgg.Entities;
 
 namespace Parley.Infrastructure.Persistence;
 
 /// <summary>
-/// Main DbContext for the Parley Discord-clone application.
-/// Handles all data persistence for conversations, messages, and servers.
+/// Main DbContext for the Parley messenger application.
+/// Handles all data persistence for conversations, messages, and users.
 /// Uses EF Core with PostgreSQL and JSONB features for flexible data storage.
 /// </summary>
 public class ParleyDbContext : DbContext
@@ -29,20 +29,7 @@ public class ParleyDbContext : DbContext
     /// </summary>
     public DbSet<Message> Messages { get; set; }
 
-    /// <summary>
-    /// DbSet for Servers (Aggregate Root).
-    /// </summary>
-    public DbSet<Server> Servers { get; set; }
-
-    /// <summary>
-    /// DbSet for ServerRoles (Entity).
-    /// </summary>
-    public DbSet<ServerRole> ServerRoles { get; set; }
-
-    /// <summary>
-    /// DbSet for ServerMembers (Entity).
-    /// </summary>
-    public DbSet<ServerMember> ServerMembers { get; set; }
+    public DbSet<User> Users { get; set; }
 
     /// <summary>
     /// Creates a new instance of ParleyDbContext.
@@ -104,4 +91,3 @@ public class ParleyDbContext : DbContext
         }
     }
 }
-

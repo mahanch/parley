@@ -18,4 +18,5 @@ public class User:AggregateRoot<Guid>
     public string Email { get; private set; }
     public string Password { get; private set; }
     public string? PhoneNumber { get; private set; }
+    public string FullName => $"{FirstName} {LastName}";
 }

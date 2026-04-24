@@ -6,23 +6,17 @@ namespace Parley.Domain.Aggregates.ConversationAgg.Entities;
 
 /// <summary>
 /// Represents a conversation (Aggregate Root).
-/// This can be a direct message, group chat, or server channel.
+/// This can be a direct message or group chat.
 /// </summary>
 public class Conversation : AggregateRoot<Guid>
 {
-    /// <summary>
-    /// The server ID if this conversation is a server channel.
-    /// Null for direct messages and group chats.
-    /// </summary>
-    public Guid? ServerId { get; private set; }
-
     /// <summary>
     /// The type of this conversation.
     /// </summary>
     public ConversationType Type { get; private set; }
 
     /// <summary>
-    /// The name of this conversation (used for group chats and server channels).
+    /// The name of this conversation (used for group chats).
     /// </summary>
     public string? Name { get; private set; }
 
@@ -46,29 +40,21 @@ public class Conversation : AggregateRoot<Guid>
     /// <summary>
     /// Creates a new Conversation.
     /// </summary>
-    public Conversation(ConversationType type, Guid? serverId = null, string? name = null)
+    public Conversation(ConversationType type, string? name = null)
     {
-        if (type == ConversationType.ServerChannel && serverId == null)
-            throw new ConversationException("Server channels must have a ServerId.");
-
-        if (type == ConversationType.ServerChannel && string.IsNullOrWhiteSpace(name))
-            throw new ConversationException("Server channels must have a name.");
+        if (type == ConversationType.Group && string.IsNullOrWhiteSpace(name))
+            throw new ConversationException("Group conversations must have a name.");
 
         Id = Guid.NewGuid();
         Type = type;
-        ServerId = serverId;
         Name = name;
     }
 
     /// <summary>
     /// Adds a participant to this conversation.
-    /// RULE: Server channels cannot have explicit participants (they use implicit role-based access).
     /// </summary>
     public void AddParticipant(Guid userId, GroupRole role = GroupRole.Member)
     {
-        if (Type == ConversationType.ServerChannel)
-            throw new ConversationException("Server channels use implicit role-based access. Cannot add explicit participants.");
-
         if (userId == Guid.Empty)
             throw new ArgumentException("User ID cannot be empty.", nameof(userId));
 
@@ -85,9 +71,6 @@ public class Conversation : AggregateRoot<Guid>
     /// </summary>
     public void RemoveParticipant(Guid userId)
     {
-        if (Type == ConversationType.ServerChannel)
-            throw new ConversationException("Server channels use implicit role-based access. Cannot remove explicit participants.");
-
         var participant = _participants.FirstOrDefault(p => p.UserId == userId);
         if (participant != null)
         {
@@ -140,4 +123,3 @@ public class Conversation : AggregateRoot<Guid>
         MarkAsModified();
     }
 }
-
