@@ -1,7 +1,8 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Minio;
 using Parley.Application._Shared.Behaviors;
 using Parley.Application.Contracts.Interfaces.Caching;
 using Parley.Application.Contracts.Interfaces.Infrastructure;
@@ -22,7 +23,7 @@ namespace Parley.Infrastructure._Bootstrapper;
 
 public static class DependencyInjection
 {
-      public static IServiceCollection AddInfrastructure(
+    public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
         IConfiguration configuration)
     {
@@ -38,7 +39,7 @@ public static class DependencyInjection
             EndPoints = { $"{redisConfig["Host"]}:{redisConfig["Port"]}" },
             ConnectTimeout = int.Parse(redisConfig["ConnectionTimeout"]!),
             SyncTimeout = int.Parse(redisConfig["SyncTimeout"]!),
-            AbortOnConnectFail = false  // فقط startup crash نکنه
+            AbortOnConnectFail = false
         };
         services.AddSingleton<IConnectionMultiplexer>(
             ConnectionMultiplexer.Connect(configOptions));
@@ -57,14 +58,27 @@ public static class DependencyInjection
         // Caching
         services.AddScoped<IRedisCache, RedisCache>();
 
-        
+        // Storage Service (MinIO)
+        var storageConfig = configuration.GetSection("Storage");
+        services.AddSingleton<IMinioClient>(sp => 
+        {
+            return new MinioClient()
+                .WithEndpoint(storageConfig["Endpoint"] ?? "localhost:9000")
+                .WithCredentials(
+                    storageConfig["AccessKey"] ?? "minioadmin",
+                    storageConfig["SecretKey"] ?? "minioadmin")
+                .WithSSL(storageConfig.GetValue<bool>("UseSSL"))
+                .Build();
+        });
+        services.AddScoped<IStorageService, Parley.Infrastructure.Services.Storage.MinioStorageService>();
+
         // Infrastructure Services
         services.AddSingleton<ISnowflakeIdGenerator, SnowflakeIdGenerator>();
         
         // MediatR Validation Behavior
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         
-        // PasswordHasehr
+        // PasswordHasher
         services.AddScoped<IPasswordHasher, PasswordHasher>();
 
         return services;
