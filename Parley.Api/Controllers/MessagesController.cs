@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Parley.Application._Shared.DTOs;
 using Parley.Application.Features.Messages.Commands;
@@ -11,6 +12,7 @@ namespace Parley.Api.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class MessagesController : ControllerBase
 {
     private readonly IMediator _mediator;

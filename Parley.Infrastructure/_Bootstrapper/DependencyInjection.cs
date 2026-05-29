@@ -1,7 +1,10 @@
+using System.Text;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Minio;
 using Parley.Application._Shared.Behaviors;
 using Parley.Application.Contracts.Interfaces.Caching;
@@ -29,7 +32,7 @@ public static class DependencyInjection
     {
         // DbContext
         services.AddDbContext<ParleyDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("parleydb"),
+            options.UseNpgsql(configuration.GetConnectionString("postgres"),
                 b => b.MigrationsAssembly(typeof(ParleyDbContext).Assembly.FullName)));
 
         // Redis
@@ -67,7 +70,7 @@ public static class DependencyInjection
                 .WithCredentials(
                     storageConfig["AccessKey"] ?? "minioadmin",
                     storageConfig["SecretKey"] ?? "minioadmin")
-                .WithSSL(storageConfig.GetValue<bool>("UseSSL"))
+                .WithSSL(Convert.ToBoolean(storageConfig["UseSSL"]))
                 .Build();
         });
         services.AddScoped<IStorageService, Parley.Infrastructure.Services.Storage.MinioStorageService>();
@@ -78,8 +81,34 @@ public static class DependencyInjection
         // MediatR Validation Behavior
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         
-        // PasswordHasher
+        // Auth Services
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<IAuthHelper, AuthHelper>();
+        services.AddHttpContextAccessor();
+
+        // JWT Authentication
+        var jwtSettings = configuration.GetSection("JwtSettings");
+        var secret = jwtSettings.GetValue<string>("Secret") ?? throw new Exception("JWT Secret not found");
+
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtSettings["Issuer"],
+                ValidAudience = jwtSettings["Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret))
+            };
+        });
+
+        services.AddAuthorization();
 
         return services;
     }

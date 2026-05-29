@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Parley.Application._Shared.DTOs;
 using Parley.Application.Features.Users.Commands.CreateUser;
@@ -18,10 +19,10 @@ public class UserController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpPost]
-    public async Task<ActionResult<BaseResponse>> CreateUser([FromBody] CreateUserCommand command)
+    [HttpPost("register")]
+    public async Task<ActionResult<BaseResponse>> Register([FromBody] RegisterUserCommand command)
     {
-        var res =await _mediator.Send(command);
+        var res = await _mediator.Send(command);
         return Ok(res);
     }
 
@@ -41,6 +42,7 @@ public class UserController : ControllerBase
     /// Gets a user's profile.
     /// </summary>
     [HttpGet("profile/{userId}")]
+    [Authorize]
     [ProducesResponseType(typeof(BaseResponse<UserProfileResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BaseResponse<UserProfileResponse>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetProfile(Guid userId)

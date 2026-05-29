@@ -14,11 +14,13 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, BaseResponse<LoginR
 {
     private readonly IUserRepository _userRepository;
     private readonly IPasswordHasher _passwordHasher;
+    private readonly IAuthHelper _authHelper;
 
-    public LoginQueryHandler(IUserRepository userRepository, IPasswordHasher passwordHasher)
+    public LoginQueryHandler(IUserRepository userRepository, IPasswordHasher passwordHasher, IAuthHelper authHelper)
     {
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
+        _authHelper = authHelper ?? throw new ArgumentNullException(nameof(authHelper));
     }
 
     public async Task<BaseResponse<LoginResponse>> Handle(LoginQuery request, CancellationToken cancellationToken)
@@ -49,14 +51,17 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, BaseResponse<LoginR
                 );
             }
 
-            // Return user info (in a real app, you'd generate a JWT token here)
+            // Generate JWT Token
+            var token = _authHelper.GenerateJwtToken(user.Id, user.Username, user.Email);
+
+            // Return user info
             var response = new LoginResponse
             {
                 UserId = user.Id,
                 Username = user.Username,
                 FullName = user.FullName,
                 Email = user.Email,
-                Token = null // TODO: implement JWT token generation
+                Token = token
             };
 
             return BaseResponse<LoginResponse>.Success(response, "Login successful.");

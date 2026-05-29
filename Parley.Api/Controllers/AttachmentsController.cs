@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Parley.Application.Contracts.Interfaces.Infrastructure;
 
@@ -5,6 +6,7 @@ namespace Parley.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class AttachmentsController : ControllerBase
 {
     private readonly IStorageService _storageService;
